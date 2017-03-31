@@ -1,8 +1,6 @@
-# SimpleState
+# SimpleState [![Build Status](https://travis-ci.org/lluzak/simple_state.svg?branch=master)](https://travis-ci.org/lluzak/simple_state)
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/simple_state`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Dead simple state machine for modular usage.
 
 ## Installation
 
@@ -12,17 +10,35 @@ Add this line to your application's Gemfile:
 gem 'simple_state'
 ```
 
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install simple_state
-
 ## Usage
 
-TODO: Write usage instructions here
+``` ruby
+class Unit
+  def initialize(state:)
+    @state = state
+  end
+
+  attr_accessor :state
+end
+
+unit = Unit.new(state: :pending)
+
+state_machine = SimpleState::Machine.new(unit, :state) do
+  state :pending, :outsourced, :printed, :matched, :dispatched, :cancelled
+
+  transition :print, from: [:pending, :outsourced], to: :printed
+  transition :match, from: :printed, to: :matched
+  transition :ship, from: :matched, to: :dispatched
+  transition :cancel, from: [:pending, :outsourced, :printed, :matched], to: :cancelled
+end
+
+state_machine.can_print?
+state_machine.print!
+
+state_machine.match!
+state_machine.can_cancel?
+
+```
 
 ## Development
 
@@ -32,8 +48,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/simple_state. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
+Bug reports and pull requests are welcome on GitHub at https://github.com/lluzak/simple_state. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
