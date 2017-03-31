@@ -1,0 +1,42 @@
+AllCops:
+  Include:
+    - '**/*.gemspec'
+    - '**/Rakefile'
+  Exclude:
+    - 'vendor/**/*'
+    - db/**/*
+    - config/**/*
+    - script/**/*
+    - spec/dummy/**/*
+    - bin/**/*
+    - !ruby/regexp /old_and_unused\.rb$/
+  DisplayCopNames: true
+
+LineLength:
+  Max: 160
+
+BlockLength:
+  Enabled: true
+  Exclude:
+    - spec/**/*
+
+StringLiterals:
+  EnforcedStyle: double_quotes
+
+Alias:
+  EnforcedStyle: prefer_alias_method
+
+Documentation:
+  Enabled: false
+
+MethodLength:
+  Max: 15
+
+AbcSize:
+  Max: 20
+
+ClassAndModuleChildren:
+  Enabled: false
+
+FrozenStringLiteralComment:
+  Enabled: false
