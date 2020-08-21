@@ -13,6 +13,29 @@ RSpec.describe SimpleState::Machine do
     end
   end
 
+  let(:other_dsl_definition) do
+    proc do
+      state :pending, :outsourced, :printed, :matched, :dispatched, :cancelled
+
+      transition :match,  from: :printed, to: :matched
+      transition :ship,   from: :matched, to: :dispatched
+      transition :cancel, from: [:pending, :outsourced, :printed, :matched], to: :cancelled
+    end
+  end
+
+  describe "when two machine exists with different states" do
+      let(:unit)                { Unit.new(state: :pending) }
+      let(:other_unit)          { Unit.new(state: :cancelled) }
+
+      let(:state_machine)       { described_class.new(unit, :state, &dsl_definition) }
+      let(:other_state_machine) { described_class.new(other_unit, :state, &other_dsl_definition) }
+
+      it "adds dynamic methods into singleton class (metaclass)" do
+        expect(state_machine.can_print?).to be_truthy
+        expect { other_state_machine.can_print? }.to raise_error
+      end
+  end
+
   describe "correctly transition between states" do
     describe "when unit is in pending state" do
       let(:unit)          { Unit.new(state: :pending) }
